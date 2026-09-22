@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, g
+from flask import Blueprint, render_template, request, redirect, url_for, g, abort
 
 from todor.auth import login_required
 from .models import Todo, User
@@ -33,8 +33,13 @@ def create():
 
 
 def get_todo(id):
-    """Obtiene una tarea por id o responde 404 si no existe."""
+    """Obtiene una tarea por id (404 si no existe) y comprueba que
+    pertenezca al usuario en sesión (403 si es de otro usuario)."""
     todo = Todo.query.get_or_404(id)
+
+    if todo.created_by != g.user.id:
+        abort(403)
+
     return todo
 
 
@@ -56,7 +61,7 @@ def update(id):
     return render_template('todo/update.html', todo=todo)
 
 
-@bp.route('/delete/<int:id>', methods=('GET', 'POST'))
+@bp.route('/delete/<int:id>', methods=('POST',))
 @login_required
 def delete(id):
     """Elimina una tarea."""
