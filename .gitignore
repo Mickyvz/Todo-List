@@ -1,0 +1,15 @@
+# Entorno virtual
+env-todo/
+venv/
+.venv/
+
+# Base de datos local
+instance/
+*.db
+
+# Cache de Python
+__pycache__/
+*.pyc
+
+# Editor
+.vscode/

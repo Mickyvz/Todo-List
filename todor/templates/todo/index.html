@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="mb-0">{% block title %}Lista de Tareas{% endblock %}</h1>
+    <a href="{{ url_for('todo.create') }}" class="btn btn-success">+ Nuevo</a>
+</div>
+<table class="table align-middle">
+    <thead>
+        <tr>
+            <th class="col">Tareas</th>
+            <th class="col text-center">Estado</th>
+            <th class="col text-center">Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for todo in todos | reverse %}
+        {% if g.user.id == todo.created_by %}
+        <tr>
+            <td>
+                <h5 {% if todo.state %}class="text-decoration-line-through text-muted"{% endif %}>{{ todo.title }}</h5>
+                <p class="mb-0">{{ todo.description }}</p>
+            </td>
+            <td class="text-center">
+                <form action="{{ url_for('todo.toggle', id=todo.id) }}" method="post" class="d-inline">
+                    {% if todo.state %}
+                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3" title="Marcar como incompleto"> Completado</button>
+                    {% else %}
+                    <button type="submit" class="btn btn-sm btn-outline-warning rounded-pill px-3" title="Marcar como completado"> Incompleto</button>
+                    {% endif %}
+                </form>
+            </td>
+            <td>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="{{ url_for('todo.update', id=todo.id) }}" class="btn btn-info btn-sm">Editar</a>
+                    <a href="{{ url_for('todo.delete', id=todo.id) }}" class="btn btn-danger btn-sm">Eliminar</a>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+</section>
+{% endblock %}
